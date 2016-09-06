@@ -1,0 +1,106 @@
+@prefix hydra: <http://www.w3.org/ns/hydra/core#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix wot: <http://example.org/wot#> .
+@prefix ex: <http://example.org/example#> .
+
+# hydra
+
+hydra:Collection a hydra:Class ;
+  hydra:supportedProperty [
+    hydra:property hydra:member ;
+    hydra:readable true ;
+    hydra:writable false
+  ] .
+
+# wot
+
+wot:Event a hydra:Class ;
+  hydra:supportedOperation [ a hydra:Operation ;
+    hydra:method "GET" ;
+    hydra:returns wot:Event
+  ], [ a hydra:Operation ;
+    hydra:method "PUT" ;
+    hydra:expects wot:Event ;
+    hydra:returns wot:Event
+  ], [ a hydra:Operation ;
+    hydra:method "DELETE"
+  ] ;
+  hydra:supportedProperty [
+    hydra:property hydra:method ;
+    hydra:readable true ;
+    hydra:writable true
+  ], [
+    hydra:property wot:target ;
+    hydra:readable true ;
+    hydra:writable true
+  ] .
+
+wot:getEvents a hydra:Operation ;
+  rdfs:label "retrieves all events" ;
+  hydra:method "GET" ;
+  hydra:returns hydra:Collection .
+
+wot:postEvent a hydra:Operation ;
+  rdfs:label "adds an event" ;
+  hydra:method "POST" ;
+  hydra:expects: wot:Event ;
+  hydra:returns wot:Event .
+
+# example
+
+<> a hydra:ApiDocumentation ;
+  hydra:supportedClass
+    hydra:Collection ,
+    wot:Event ,
+    ex:TemperatureSensor .
+
+ex:TemperatureSensor a hydra:Class ;
+  rdfs:label "Temperature Sensor" ;
+  hydra:supportedOperation [ a hydra:Operation ;
+    hydra:method "GET" ;
+    hydra:returns ex:TemperatureSensor
+  ], [ a hydra:Operation ;
+    hydra:method "PUT" ;
+    hydra:expects ex:TemperatureSensor ;
+    hydra:returns ex:TemperatureSensor
+  ] ;
+  hydra:supportedProperty [
+    hydra:property ex:temperature ;
+    hydra:readable true ;
+    hydra:writable false
+  ], [
+    hydra:property ex:threshold ;
+    hydra:readable true ;
+    hydra:writable true
+  ], [
+    hydra:property ex:temperatureChange ;
+    hydra:readable true ;
+    hydra:writable false
+  ], [
+    hydra:property ex:thresholdWarning ;
+    hydra:readable true ;
+    hydra:writable false
+  ] .
+
+ex:temperatureChange
+  a
+    rdf:Property ,
+    wot:EventHandler ;
+  rdfs:label "temperature change events" ;
+  hydra:supportedOperation
+    wot:getEvents ,
+    wot:postEvent ;
+  wot:sends ex:Temperature .
+
+ex:thresholdWarning
+  a
+    rdf:Property ,
+    wot:EventHandler ;
+  rdfs:label "threshold warning events" ;
+  hydra:supportedOperation
+    wot:getEvents ,
+    wot:postEvent ;
+  wot:sends: ex:Temperature .
