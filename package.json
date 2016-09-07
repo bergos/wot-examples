@@ -1,7 +1,7 @@
 {
   "name": "wot-examples",
   "version": "0.0.1",
-  "description": "Web of Things examples",
+  "description": "Web of Things Hydra examples",
   "main": "index.js",
   "scripts": {},
   "repository": {
